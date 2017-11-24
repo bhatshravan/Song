@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+import _thread
 import sys
 import requests
 import http.client # module for making HTTP request to website
@@ -28,7 +29,7 @@ def uprint(*objects, sep=' ', end='\n', file=sys.stdout):
         f = lambda obj: str(obj).encode(enc, errors='backslashreplace').decode(enc)
         print(*map(f, objects), sep=sep, end=end, file=file)
 api="https://content.googleapis.com/youtube/v3/search?q="
-api3="&maxResults=25&part=snippet&key=$$$YOUTUBE_API_KEY$$$"
+api3="&maxResults=25&part=snippet&key=AIzaSyAjtQHN9pkXswmmvWLOfpzhEwA3uhUTiJM"
 
 ydl_opts = {
     'format': 'bestaudio/best',
@@ -56,6 +57,22 @@ def file():
 		except:
 			print("Convert Error")
 		print("Video Downloaded\n\n")
+		
+def print_time( test, i,imax):
+	search=(test).replace(' ','%20')
+	url=api+search+api3
+	r = requests.get(url)
+	cont = (r.json())
+	videoid=cont['items'][0]['id']['videoId']
+	print("Video found:Parsing json")
+	nn='https://www.youtube.com/watch?v='+videoid
+	try:
+		with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+			ydl.download([nn])
+	except:
+		print("Convert Error")
+	print("Video Downloaded\n\n")
+		
 n=0
 while n<10:
 
@@ -75,6 +92,8 @@ while n<10:
 		n=10
 		break
 	else:
+		_thread.start_new_thread( print_time, (test, 1,10 ) )
+		"""start_time = timeit.default_timer()
 		search=(test).replace(' ','%20')
 		#print(search)
 		url=api+search+api3
@@ -88,16 +107,18 @@ while n<10:
 		#uprint(cont['items'][0]['id']['videoId'])
 		#videoid=(r.json())
 		print("Video found:Parsing json")
-		nn='https://www.youtube.com/watch?v='+videoid
+		nn='https://www.youtube.com/watch?v='+videoid"""
+		
 		"""video = pafy.new(nn)
 		audiostreams = video.audiostreams
 		audiostreams[1].download()"""
+		"""
 		try:
 			with youtube_dl.YoutubeDL(ydl_opts) as ydl:
 				ydl.download([nn])
 		except:
 			print("Convert Error")
-		print("Video Downloaded\n\n")
-
-elapsed = timeit.default_timer() - start_time
-print(elapsed)
+		print("Video Downloaded")
+		"""
+		elapsed = timeit.default_timer() - start_time
+		print("Time Taken:{0}\n\n".format(elapsed))
